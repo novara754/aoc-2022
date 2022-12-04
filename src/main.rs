@@ -5,10 +5,11 @@ use harness::PuzzleSolution;
 mod day1;
 mod day2;
 mod day3;
+mod day4;
 mod harness;
 
 fn main() {
-    let days: [&dyn PuzzleSolution; 3] = [&day1::Day1, &day2::Day2, &day3::Day3];
+    let days: [&dyn PuzzleSolution; 4] = [&day1::Day1, &day2::Day2, &day3::Day3, &day4::Day4];
     for (idx, solution) in days.iter().enumerate() {
         let input = std::fs::read_to_string(format!("inputs/day{}.txt", idx + 1)).unwrap();
 
