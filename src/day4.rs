@@ -21,6 +21,8 @@ fn kinda_overlap(a: (u64, u64), b: (u64, u64)) -> bool {
 }
 
 impl PuzzleSolution for Day4 {
+    type Output = u64;
+
     fn part1(&self, input: &str) -> u64 {
         input
             .trim()

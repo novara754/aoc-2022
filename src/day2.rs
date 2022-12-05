@@ -66,6 +66,8 @@ impl Outcome {
 }
 
 impl PuzzleSolution for Day2 {
+    type Output = u64;
+
     fn part1(&self, input: &str) -> u64 {
         fn parse_line(line: &str) -> (Move, Move) {
             let mut parts = line.chars();

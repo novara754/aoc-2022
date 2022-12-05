@@ -16,6 +16,8 @@ fn get_priority(item: &u8) -> u64 {
 }
 
 impl PuzzleSolution for Day3 {
+    type Output = u64;
+
     fn part1(&self, input: &str) -> u64 {
         input
             .trim()

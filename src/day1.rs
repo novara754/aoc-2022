@@ -11,6 +11,8 @@ fn get_elf_calories(input: &str) -> impl Iterator<Item = u64> + '_ {
 }
 
 impl PuzzleSolution for Day1 {
+    type Output = u64;
+
     fn part1(&self, input: &str) -> u64 {
         get_elf_calories(input)
             .enumerate()

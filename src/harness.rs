@@ -1,5 +1,7 @@
 pub trait PuzzleSolution {
-    fn part1(&self, input: &str) -> u64;
+    type Output;
 
-    fn part2(&self, input: &str) -> u64;
+    fn part1(&self, input: &str) -> Self::Output;
+
+    fn part2(&self, input: &str) -> Self::Output;
 }
