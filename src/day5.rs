@@ -23,109 +23,92 @@ pub struct Day5;
 //     println!();
 // }
 
+struct Ship {
+    stacks: Vec<Vec<char>>,
+}
+
+struct Instruction {
+    amount: usize,
+    to: usize,
+    from: usize,
+}
+
+fn rearrange_crates(input: &str, transfer_fn: impl Fn(&mut Ship, Instruction)) -> String {
+    let input = input.trim_end();
+    let row_regex = Regex::new(r"(\[[A-Z]\]|(:?   ))\s?").unwrap();
+    let instruction_regex =
+        Regex::new(r"^move (?P<amount>\d+) from (?P<from>\d) to (?P<to>\d)$").unwrap();
+
+    let (stacks, instructions) = {
+        let mut parts = input.split("\n\n");
+        let stacks = parts.next().unwrap();
+        let instructions = parts.next().unwrap();
+        (stacks, instructions)
+    };
+
+    let mut ship = Ship { stacks: vec![] };
+
+    for row in stacks.split('\n').rev() {
+        for (column, container) in row_regex
+            .captures_iter(row)
+            .map(|capture| capture.get(1).unwrap().as_str())
+            .enumerate()
+        {
+            if ship.stacks.len() <= column {
+                ship.stacks.push(vec![]);
+            }
+
+            if container == "   " {
+                continue;
+            }
+
+            ship.stacks[column].push(container.chars().nth(1).unwrap());
+        }
+    }
+
+    for instruction_raw in instructions.split('\n') {
+        let captures = instruction_regex.captures(instruction_raw).unwrap();
+
+        let get_val = |name| captures.name(name).unwrap().as_str().parse().unwrap();
+        let instruction = Instruction {
+            amount: get_val("amount"),
+            from: get_val("from"),
+            to: get_val("to"),
+        };
+
+        transfer_fn(&mut ship, instruction);
+    }
+
+    ship.stacks
+        .iter()
+        .map(|stack| stack.last().unwrap())
+        .join("")
+}
+
 impl PuzzleSolution for Day5 {
     type Output = String;
 
     fn part1(&self, input: &str) -> String {
-        let input = input.trim_end();
-        let row_regex = Regex::new(r"(\[[A-Z]\]|(:?   ))\s?").unwrap();
-        let instruction_regex = Regex::new(r"^move (\d+) from (\d) to (\d)$").unwrap();
-
-        let (stacks, instructions) = {
-            let mut parts = input.split("\n\n");
-            let stacks = parts.next().unwrap();
-            let instructions = parts.next().unwrap();
-            (stacks, instructions)
-        };
-
-        let mut ship: Vec<Vec<char>> = vec![];
-
-        for row in stacks.split('\n').rev() {
-            for (column, container) in row_regex
-                .captures_iter(row)
-                .map(|capture| capture.get(1).unwrap().as_str())
-                .enumerate()
-            {
-                if ship.len() <= column {
-                    ship.push(vec![]);
-                }
-
-                if container == "   " {
-                    continue;
-                }
-
-                ship[column].push(container.chars().nth(1).unwrap());
+        rearrange_crates(input, |ship, instruction| {
+            for _ in 0..instruction.amount {
+                let container = ship.stacks[instruction.from - 1].pop().unwrap();
+                ship.stacks[instruction.to - 1].push(container);
             }
-        }
-
-        for instruction_raw in instructions.split('\n') {
-            let instruction = instruction_regex.captures(instruction_raw).unwrap();
-            let (amount, from, to): (usize, usize, usize) = (
-                instruction.get(1).unwrap().as_str().parse().unwrap(),
-                instruction.get(2).unwrap().as_str().parse().unwrap(),
-                instruction.get(3).unwrap().as_str().parse().unwrap(),
-            );
-            for _ in 0..amount {
-                let container = ship[from - 1].pop().unwrap();
-                ship[to - 1].push(container);
-            }
-        }
-
-        ship.iter().map(|stack| stack.last().unwrap()).join("")
+        })
     }
 
     fn part2(&self, input: &str) -> String {
-        let input = input.trim_end();
-        let row_regex = Regex::new(r"(\[[A-Z]\]|(:?   ))\s?").unwrap();
-        let instruction_regex = Regex::new(r"^move (\d+) from (\d) to (\d)$").unwrap();
-
-        let (stacks, instructions) = {
-            let mut parts = input.split("\n\n");
-            let stacks = parts.next().unwrap();
-            let instructions = parts.next().unwrap();
-            (stacks, instructions)
-        };
-
-        let mut ship: Vec<Vec<char>> = vec![];
-
-        for row in stacks.split('\n').rev() {
-            for (column, container) in row_regex
-                .captures_iter(row)
-                .map(|capture| capture.get(1).unwrap().as_str())
-                .enumerate()
-            {
-                if ship.len() <= column {
-                    ship.push(vec![]);
-                }
-
-                if container == "   " {
-                    continue;
-                }
-
-                ship[column].push(container.chars().nth(1).unwrap());
-            }
-        }
-
-        for instruction_raw in instructions.split('\n') {
-            let instruction = instruction_regex.captures(instruction_raw).unwrap();
-            let (amount, from, to): (usize, usize, usize) = (
-                instruction.get(1).unwrap().as_str().parse().unwrap(),
-                instruction.get(2).unwrap().as_str().parse().unwrap(),
-                instruction.get(3).unwrap().as_str().parse().unwrap(),
-            );
-
+        rearrange_crates(input, |ship, instruction| {
             let mut tmp = vec![];
-            for _ in 0..amount {
-                let container = ship[from - 1].pop().unwrap();
+            for _ in 0..instruction.amount {
+                let container = ship.stacks[instruction.from - 1].pop().unwrap();
                 tmp.push(container);
             }
-            for _ in 0..amount {
+            for _ in 0..instruction.amount {
                 let container = tmp.pop().unwrap();
-                ship[to - 1].push(container);
+                ship.stacks[instruction.to - 1].push(container);
             }
-        }
-
-        ship.iter().map(|stack| stack.last().unwrap()).join("")
+        })
     }
 }
 
