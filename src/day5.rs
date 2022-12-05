@@ -35,7 +35,6 @@ struct Instruction {
 
 fn rearrange_crates(input: &str, transfer_fn: impl Fn(&mut Ship, Instruction)) -> String {
     let input = input.trim_end();
-    let row_regex = Regex::new(r"(\[[A-Z]\]|(:?   ))\s?").unwrap();
     let instruction_regex =
         Regex::new(r"^move (?P<amount>\d+) from (?P<from>\d) to (?P<to>\d)$").unwrap();
 
@@ -49,20 +48,16 @@ fn rearrange_crates(input: &str, transfer_fn: impl Fn(&mut Ship, Instruction)) -
     let mut ship = Ship { stacks: vec![] };
 
     for row in stacks.split('\n').rev() {
-        for (column, container) in row_regex
-            .captures_iter(row)
-            .map(|capture| capture.get(1).unwrap().as_str())
-            .enumerate()
-        {
-            if ship.stacks.len() <= column {
-                ship.stacks.push(vec![]);
-            }
+        for (idx, ch) in row.chars().enumerate() {
+            if ch.is_alphabetic() {
+                let column = (idx - 1) / 4;
 
-            if container == "   " {
-                continue;
-            }
+                if ship.stacks.len() <= column {
+                    ship.stacks.resize(column + 1, vec![]);
+                }
 
-            ship.stacks[column].push(container.chars().nth(1).unwrap());
+                ship.stacks[column].push(ch);
+            }
         }
     }
 
