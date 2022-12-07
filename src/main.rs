@@ -8,6 +8,7 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 mod harness;
 
 macro_rules! print_solutions {
@@ -53,5 +54,6 @@ fn main() {
         4 => day4::Day4;
         5 => day5::Day5;
         6 => day6::Day6;
+        7 => day7::Day7;
     )
 }
