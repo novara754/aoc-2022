@@ -37,47 +37,26 @@ fn print_solution(day_num: usize, solution: impl PuzzleSolution<Output = impl Di
     );
 }
 
-macro_rules! print_solutions {
-    (impl $day:expr => $solution:expr) => {{
-        print_solution($day, $solution);
-    }};
-
-    ($day:expr => $solution:expr;) => {{
-        print_solutions!(impl $day => $solution);
-    }};
-
-    ($day:expr => $solution:expr; $($rest:tt)+) => {{
-        print_solutions!(impl $day => $solution);
-        print_solutions!($($rest)*);
-    }};
-}
-
 fn main() {
+    let do_day = |day| match day {
+        1 => print_solution(day, day1::Day1),
+        2 => print_solution(day, day2::Day2),
+        3 => print_solution(day, day3::Day3),
+        4 => print_solution(day, day4::Day4),
+        5 => print_solution(day, day5::Day5),
+        6 => print_solution(day, day6::Day6),
+        7 => print_solution(day, day7::Day7),
+        8 => print_solution(day, day8::Day8),
+        9 => print_solution(day, day9::Day9),
+        _ => panic!("invalid day `{day}`"),
+    };
+
     if let Some(day) = std::env::args().nth(1) {
         let day = day.parse().unwrap();
-        match day {
-            1 => print_solution(day, day1::Day1),
-            2 => print_solution(day, day2::Day2),
-            3 => print_solution(day, day3::Day3),
-            4 => print_solution(day, day4::Day4),
-            5 => print_solution(day, day5::Day5),
-            6 => print_solution(day, day6::Day6),
-            7 => print_solution(day, day7::Day7),
-            8 => print_solution(day, day8::Day8),
-            9 => print_solution(day, day9::Day9),
-            _ => panic!("invalid day"),
-        }
+        do_day(day);
     } else {
-        print_solutions!(
-            1 => day1::Day1;
-            2 => day2::Day2;
-            3 => day3::Day3;
-            4 => day4::Day4;
-            5 => day5::Day5;
-            6 => day6::Day6;
-            7 => day7::Day7;
-            8 => day8::Day8;
-            9 => day9::Day9;
-        )
+        for day in 1..10 {
+            do_day(day);
+        }
     }
 }
