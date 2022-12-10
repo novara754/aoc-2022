@@ -3,6 +3,7 @@ use std::{fmt::Display, time::Instant};
 use harness::PuzzleSolution;
 
 mod day1;
+mod day10;
 mod day2;
 mod day3;
 mod day4;
@@ -48,6 +49,7 @@ fn main() {
         7 => print_solution(day, day7::Day7),
         8 => print_solution(day, day8::Day8),
         9 => print_solution(day, day9::Day9),
+        10 => print_solution(day, day10::Day10),
         _ => panic!("invalid day `{day}`"),
     };
 
@@ -55,7 +57,7 @@ fn main() {
         let day = day.parse().unwrap();
         do_day(day);
     } else {
-        for day in 1..10 {
+        for day in 1..11 {
             do_day(day);
         }
     }
